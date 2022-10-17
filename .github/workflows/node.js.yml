@@ -41,6 +41,7 @@ jobs:
           name: builddev
           # Destination path
           path: ./
+      - run: ls -lRa
       - run: swa deploy -O "./builddev" --deployment-token ${{ secrets.TOKEN }}
     
   buildprd: 
