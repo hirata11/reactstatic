@@ -21,6 +21,7 @@ jobs:
         cache: 'npm'
     - run: npm i -g @azure/static-web-apps-cli
     - run: swa
+    - run: cp ./swa-cli.config.json ./build
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
@@ -34,7 +35,6 @@ jobs:
     needs: builddev
     environment: development
     steps:
-      - uses: actions/checkout@v3
       - run: npm i -g @azure/static-web-apps-cli
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
@@ -43,10 +43,7 @@ jobs:
           # Destination path
           path: ./build
       - run: ls -lRa
-      - run: |
-          chmod +x ./deploy.sh
-          ./deploy.sh
-        shell: bash
+      - run: swa deploy -w ./build --deployment-token ${{ secrets.TOKEN }} 
     
   buildprd: 
     runs-on: ubuntu-latest
