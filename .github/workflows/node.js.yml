@@ -41,7 +41,7 @@ jobs:
         with:
           name: builddev
           # Destination path
-          path: ./
+          path: ./build
       - run: ls -lRa
       - run: |
           chmod +x ./deploy.sh
