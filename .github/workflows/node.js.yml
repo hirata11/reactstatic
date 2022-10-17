@@ -40,5 +40,5 @@ jobs:
         with:
           # Destination path
           path: ./
-      - run: swa deploy -O "./reactstatic/reactstatic/build" --deployment-token ${{ secrets.TOKEN }}
+      - run: swa deploy -O "./build" --deployment-token ${{ secrets.TOKEN }}
 
