@@ -41,7 +41,7 @@ jobs:
           name: builddev
           # Destination path
           path: ./
-      - run: swa deploy -O "./build" --deployment-token ${{ secrets.TOKEN }}
+      - run: swa deploy -O "./builddev" --deployment-token ${{ secrets.TOKEN }}
     
   buildprd: 
     runs-on: ubuntu-latest
@@ -75,5 +75,5 @@ jobs:
           name: buildprd
           # Destination path
           path: ./
-      - run: swa deploy -O "./build" --env "Production" --deployment-token ${{ secrets.TOKEN }}
+      - run: swa deploy -O "./buildprd" --env "Production" --deployment-token ${{ secrets.TOKEN }}
 
