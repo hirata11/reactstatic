@@ -43,7 +43,7 @@ jobs:
           # Destination path
           path: ./build
       - run: ls -lRa
-      - run: swa deploy -w ./build --deployment-token ${{ secrets.TOKEN }} 
+      - run: swa deploy -w ./build -O ./build --deployment-token ${{ secrets.TOKEN }} 
     
   buildprd: 
     runs-on: ubuntu-latest
