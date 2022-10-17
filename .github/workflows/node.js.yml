@@ -38,7 +38,7 @@ jobs:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
         with:
-          name: buildev
+          name: builddev
           # Destination path
           path: ./
       - run: swa deploy -O "./build" --deployment-token ${{ secrets.TOKEN }}
