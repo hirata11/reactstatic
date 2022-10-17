@@ -20,7 +20,7 @@ jobs:
         node-version: 16.x
         cache: 'npm'
     - run: npm i -g @azure/static-web-apps-cli
-    - run: swa
+    - run: swa build --auto
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
@@ -55,7 +55,7 @@ jobs:
         node-version: 16.x
         cache: 'npm'
     - run: npm i -g @azure/static-web-apps-cli
-    - run: swa
+    - run: swa build --auto
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
