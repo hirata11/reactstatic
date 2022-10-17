@@ -77,7 +77,7 @@ jobs:
         with:
           name: buildprd
           # Destination path
-          path: ./
+          path: ./build
       - run: cp ./build/swa-cli.config.json ./
       - run: swa deploy --env "Production" --deployment-token ${{ secrets.TOKEN }}
 
