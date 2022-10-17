@@ -43,7 +43,9 @@ jobs:
           # Destination path
           path: ./
       - run: ls -lRa
-      - run: ./deploy.sh
+      - run: |
+          chmod +x ./deploy.sh
+          ./deploy.sh
         shell: bash
     
   buildprd: 
