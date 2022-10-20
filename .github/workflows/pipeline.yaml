@@ -40,9 +40,17 @@ jobs:
         name: builddev
         # A file, directory or wildcard pattern that describes what to upload
         path:  ./build
-    - uses: montudor/action-zip@v1
+
+    #- uses: montudor/action-zip@v1
+    #  with:
+    #    args: zip -qq -r build.zip build
+
+    - name: Compress
+      uses: TonyBogdanov/zip@1.0
       with:
-        args: zip -qq -r build.zip build
+          args: zip -qq -r ./build.zip ./build
+
+
     - uses: echapmanFromBunnings/upload-release-assets@1.2
       with:
         releaseTag: ${{ steps.latest.outputs.tag_name }}   
@@ -71,9 +79,16 @@ jobs:
           file: build.zip 
           path: ./
           token: ${{ secrets.PAT }}
-      - uses: montudor/action-zip@v1
+
+      - name: Decompress
+        uses: TonyBogdanov/zip@1.0
         with:
-          args: unzip -qq ./build.zip -d /build
+            args: unzip -qq ./build.zip -d ./build          
+
+      #- uses: montudor/action-zip@v1
+      #  with:
+      #    args: unzip -qq ./build.zip -d /build
+
       - run: ls -lRa
       - run: cp ./build/swa-cli.config.json ./
       - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
