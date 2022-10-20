@@ -87,7 +87,7 @@ jobs:
       - name: Decompress
         uses: TonyBogdanov/zip@1.0
         with:
-            args: unzip -qq ./build.zip -d ./build
+            args: unzip -qq ./build.zip -d ./
       
       - run: ls -lRa
 
