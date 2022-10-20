@@ -1,0 +1,59 @@
+name: FrontEnd
+on: 
+  workflow_dispatch:
+  release:
+    types: published
+env:
+  APP: frontend # nome da aplicação.
+  IMAGE: frontend #nome da imagem
+  ACR: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+jobs:
+  buildTemplate:
+    runs-on: ubuntu-latest
+    steps:    
+      - id: latest
+        uses: thebritican/fetch-latest-release@v2.0.0
+        with:
+          github_token: ${{ secrets.PAT }}    
+      - name: "Checkout GitHub Action"
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.latest.outputs.tag_name }}          
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template
+       - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'npm'
+       - run: npm i -g @azure/static-web-apps-cli
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+      - name: templateBuiid 
+        uses: ./template/build/branch
+        with:
+          tag: ${{ steps.latest.outputs.tag_name }}
+          token: ${{ secrets.PAT }}
+      - name: templateBuiid  
+        uses: ./template/build/api
+        with:
+          REGISTRY_LOGIN_SERVER:  ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE: ${{ env.IMAGE }}
+          ACR: ${{ env.ACR }}
+          tag: ${{ steps.latest.outputs.tag_name }}       
