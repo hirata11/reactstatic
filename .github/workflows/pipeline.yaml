@@ -74,7 +74,7 @@ jobs:
           token: ${{ secrets.PAT }}
       
       - name: Download Release Asset
-        id: download_release_asset
+        id: download_release
         uses: i3h/download-release-asset@v1
         with:
           owner: hirata11
