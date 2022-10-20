@@ -71,7 +71,7 @@ jobs:
           file: build.zip 
           path: ./
           token: ${{ secrets.PAT }}
-      - run: lr -lRa
+      - run: ls -lRa
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
         with:
