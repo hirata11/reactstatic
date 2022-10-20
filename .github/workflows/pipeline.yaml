@@ -146,6 +146,11 @@ jobs:
             file: swa-cli.config.json
             path: ./
             token: ${{ secrets.PAT }}
-
-        - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
         
+        - name: Decompress
+          uses: TonyBogdanov/zip@1.0
+          with:
+              args: unzip -qq ./build.zip -d ./
+
+          - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
+          
