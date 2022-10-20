@@ -40,13 +40,15 @@ jobs:
         name: builddev
         # A file, directory or wildcard pattern that describes what to upload
         path:  ./build
+    - uses: montudor/action-zip@v1
+      with:
+        args: zip -qq -r build.zip build
     - uses: echapmanFromBunnings/upload-release-assets@1.2
       with:
         releaseTag: ${{ steps.latest.outputs.tag_name }}   
         githubToken: ${{ secrets.GITHUB_TOKEN }}
         files: |
-          ./build/*
-
+          ./build.zip
 
 
   deploydev:
