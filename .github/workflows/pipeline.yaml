@@ -25,12 +25,21 @@ jobs:
           repository: hirata11/devops-template
           token: ${{ secrets.PAT }} 
           path: template
-       - name: Use Node.js
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: 'npm'
        - run: npm i -g @azure/static-web-apps-cli
+        - run: swa
+        - run: cp ./swa-cli.config.json ./build
+        - name: Upload a Build Artifact
+          uses: actions/upload-artifact@v3.1.0
+          with:
+            # Artifact name
+            name: builddev
+            # A file, directory or wildcard pattern that describes what to upload
+            path:  ./build
 
           
           
