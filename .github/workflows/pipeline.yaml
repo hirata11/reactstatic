@@ -31,38 +31,12 @@ jobs:
           node-version: 16.x
           cache: 'npm'
        - run: npm i -g @azure/static-web-apps-cli
-        - run: swa
-        - run: cp ./swa-cli.config.json ./build
-        - name: Upload a Build Artifact
-          uses: actions/upload-artifact@v3.1.0
-          with:
-            # Artifact name
-            name: builddev
-            # A file, directory or wildcard pattern that describes what to upload
-            path:  ./build
-
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-      - name: templateBuiid 
-        uses: ./template/build/branch
-        with:
-          tag: ${{ steps.latest.outputs.tag_name }}
-          token: ${{ secrets.PAT }}
-      - name: templateBuiid  
-        uses: ./template/build/api
-        with:
-          REGISTRY_LOGIN_SERVER:  ${{ secrets.REGISTRY_LOGIN_SERVER }}
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE: ${{ env.IMAGE }}
-          ACR: ${{ env.ACR }}
-          tag: ${{ steps.latest.outputs.tag_name }}       
+       - run: swa
+       - run: cp ./swa-cli.config.json ./build
+       - name: Upload a Build Artifact
+         uses: actions/upload-artifact@v3.1.0
+         with:
+           # Artifact name
+           name: builddev
+           # A file, directory or wildcard pattern that describes what to upload
+           path:  ./build
