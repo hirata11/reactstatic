@@ -152,5 +152,5 @@ jobs:
           with:
               args: unzip -qq ./build.zip -d ./
 
-          - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
+        - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
           
