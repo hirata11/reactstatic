@@ -15,35 +15,28 @@ jobs:
       uses: thebritican/fetch-latest-release@v2.0.0
       with:
         github_token: ${{ secrets.PAT }}    
+
     - name: "Checkout GitHub Action"
       uses: actions/checkout@v2
       with:
-        ref: ${{ steps.latest.outputs.tag_name }}          
+        ref: ${{ steps.latest.outputs.tag_name }}      
+
     - name: Checkout private tools
       uses: actions/checkout@v3
       with:
         repository: hirata11/devops-template
         token: ${{ secrets.PAT }} 
         path: template
+
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
         cache: 'npm'
-    - run: npm i -g @azure/static-web-apps-cli
-    - run: swa
-    - run: cp ./swa-cli.config.json ./build
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
-      with:
-        # Artifact name
-        name: builddev
-        # A file, directory or wildcard pattern that describes what to upload
-        path:  ./build
 
-    #- uses: montudor/action-zip@v1
-    #  with:
-    #    args: zip -qq -r build.zip build
+    - run: npm i -g @azure/static-web-apps-cli
+
+    - run: swa
 
     - run: zip -qq -r ./build.zip ./build
 
@@ -51,7 +44,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        file: "build.zip"
+        file: "build.zip;swa-cli.config.json"
         update_latest_release: true
         draft: false
         overwrite: false
@@ -62,11 +55,13 @@ jobs:
     needs: builddev
     environment: development
     steps:
+
       - run: npm i -g @azure/static-web-apps-cli
       - id: latest
         uses: thebritican/fetch-latest-release@v2.0.0
         with:
-          github_token: ${{ secrets.PAT }} 
+          github_token: ${{ secrets.PAT }}
+
       - name: Download Release Asset
         id: download_release_asset
         uses: i3h/download-release-asset@v1
@@ -77,17 +72,22 @@ jobs:
           file: build.zip 
           path: ./
           token: ${{ secrets.PAT }}
+      
+      - name: Download Release Asset
+        id: download_release_asset
+        uses: i3h/download-release-asset@v1
+        with:
+          owner: hirata11
+          repo: reactstatic
+          tag: ${{ steps.latest.outputs.tag_name }} 
+          file: swa-cli.config.json
+          path: ./
+          token: ${{ secrets.PAT }}
 
       - name: Decompress
         uses: TonyBogdanov/zip@1.0
         with:
-            args: unzip -qq ./build.zip -d ./build          
+            args: unzip -qq ./build.zip -d ./build
 
-      #- uses: montudor/action-zip@v1
-      #  with:
-      #    args: unzip -qq ./build.zip -d /build
-
-      - run: ls -lRa
-      - run: cp ./build/swa-cli.config.json ./
       - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
 
