@@ -98,6 +98,7 @@ jobs:
       needs: deploydev
       environment: rollback
       steps:
+        - run: npm i -g @azure/static-web-apps-cli
         - id: latestdel
           uses: thebritican/fetch-latest-release@v2.0.0
           with:
@@ -145,6 +146,6 @@ jobs:
             file: swa-cli.config.json
             path: ./
             token: ${{ secrets.PAT }}
-            
+
         - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
         
