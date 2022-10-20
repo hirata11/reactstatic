@@ -93,3 +93,56 @@ jobs:
 
       - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
 
+  rollbackprd:
+      runs-on: ubuntu-latest
+      needs: deploydev
+      environment: rollback
+      steps:
+        - id: latestdel
+          uses: thebritican/fetch-latest-release@v2.0.0
+          with:
+            github_token: ${{ secrets.PAT }} 
+        - name: getreleaseid  
+          run: |
+            release=$(curl \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.PAT }} " \
+              https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/tags/${{ steps.latestdel.outputs.tag_name }}  | jq '.id')
+            echo $release
+            curl \
+              -X DELETE \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.PAT }} " \
+              https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/$release
+          shell: bash
+        - run: |
+            sleep 1m
+            curl -sL https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/latest | jq -r ".tag_name"
+          shell: bash
+
+        - name: get lastest release
+          id: lastestRelease
+          run: echo "::set-output name=releasename::$(curl -sL https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/latest | jq -r ".tag_name")"
+
+        - name: Download Release Asset
+          id: download_release_asset
+          uses: i3h/download-release-asset@v1
+          with:
+            owner: hirata11
+            repo: reactstatic
+            tag: ${{ steps.lastestRelease.outputs.releasename }}    
+            file: build.zip 
+            path: ./
+            token: ${{ secrets.PAT }}
+        
+        - name: Download Release Asset
+          id: download_release
+          uses: i3h/download-release-asset@v1
+          with:
+            owner: hirata11
+            repo: reactstatic
+            tag: ${{ steps.lastestRelease.outputs.releasename }}   
+            file: swa-cli.config.json
+            path: ./
+            token: ${{ secrets.PAT }}
+        
