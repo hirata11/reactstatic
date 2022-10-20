@@ -88,6 +88,8 @@ jobs:
         uses: TonyBogdanov/zip@1.0
         with:
             args: unzip -qq ./build.zip -d ./build
+      
+      - run: ls -lRa
 
       - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
 
