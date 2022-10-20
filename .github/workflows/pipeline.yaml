@@ -47,12 +47,14 @@ jobs:
 
     - run: zip -qq -r ./build.zip ./build
 
-    - uses: echapmanFromBunnings/upload-release-assets@1.2
+    - uses: xresloader/upload-to-github-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        releaseTag: ${{ steps.latest.outputs.tag_name }}   
-        githubToken: ${{ secrets.GITHUB_TOKEN }}
-        files: |
-          ./build.zip
+        file: "build.zip"
+        update_latest_release: true
+        overwrite: true
+        verbose: true
 
 
   deploydev:
