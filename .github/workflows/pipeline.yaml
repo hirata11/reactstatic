@@ -4,7 +4,7 @@ on:
   release:
     types: published
 env:
-  APP: frontend # nome da aplicação.
+  APP: reactstatic # nome da aplicação.
   IMAGE: frontend #nome da imagem
   ACR: ${{ secrets.REGISTRY_LOGIN_SERVER }}
 jobs:
@@ -107,22 +107,22 @@ jobs:
             release=$(curl \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.PAT }} " \
-              https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/tags/${{ steps.latestdel.outputs.tag_name }}  | jq '.id')
+              https://api.github.com/repos/hirata11/${{ env.APP }}/releases/tags/${{ steps.latestdel.outputs.tag_name }}  | jq '.id')
             echo $release
             curl \
               -X DELETE \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.PAT }} " \
-              https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/$release
+              https://api.github.com/repos/hirata11/${{ env.APP }}/releases/$release
           shell: bash
         - run: |
             sleep 1m
-            curl -sL https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/latest | jq -r ".tag_name"
+            curl -sL https://api.github.com/repos/hirata11/${{ env.APP }}/releases/latest | jq -r ".tag_name"
           shell: bash
 
         - name: get lastest release
           id: lastestRelease
-          run: echo "::set-output name=releasename::$(curl -sL https://api.github.com/repos/hirata11/${{ env.IMAGE }}/releases/latest | jq -r ".tag_name")"
+          run: echo "::set-output name=releasename::$(curl -sL https://api.github.com/repos/hirata11/${{ env.APP }}/releases/latest | jq -r ".tag_name")"
 
         - name: Download Release Asset
           id: download_release_asset
