@@ -71,13 +71,10 @@ jobs:
           file: build.zip 
           path: ./
           token: ${{ secrets.PAT }}
-      - run: ls -lRa
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3.0.0
+      - uses: montudor/action-zip@v1
         with:
-          name: builddev
-          # Destination path
-          path: ./build
+          args: unzip -qq ./build.zip -d /build
+      - run: ls -lRa
       - run: cp ./build/swa-cli.config.json ./
       - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
 
