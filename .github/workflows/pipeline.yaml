@@ -145,4 +145,6 @@ jobs:
             file: swa-cli.config.json
             path: ./
             token: ${{ secrets.PAT }}
+            
+        - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
         
