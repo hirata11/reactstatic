@@ -53,9 +53,6 @@ jobs:
       with:
         file: "build.zip"
         update_latest_release: true
-        overwrite: true
-        verbose: true
-
 
   deploydev:
     runs-on: ubuntu-latest
