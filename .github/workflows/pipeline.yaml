@@ -36,6 +36,8 @@ jobs:
 
     - name: templateBuild
       uses: ./template/build/front
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   deploydev:
     runs-on: ubuntu-latest
