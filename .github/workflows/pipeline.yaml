@@ -44,11 +44,16 @@ jobs:
     needs: builddev
     environment: development
     steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template    
       - id: latest
         uses: thebritican/fetch-latest-release@v2.0.0
         with:
           github_token: ${{ secrets.PAT }}
-
       - name: templateDeploy
         uses: ./template/deploy/front
         with:
@@ -61,6 +66,12 @@ jobs:
       needs: deploydev
       environment: rollback
       steps:
+        - name: Checkout private tools
+          uses: actions/checkout@v3
+          with:
+            repository: hirata11/devops-template
+            token: ${{ secrets.PAT }} 
+            path: template
         - run: npm i -g @azure/static-web-apps-cli
         - id: latestdel
           uses: thebritican/fetch-latest-release@v2.0.0
