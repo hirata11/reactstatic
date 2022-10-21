@@ -6,7 +6,7 @@ on:
 env:
   APP: reactstatic # nome da aplicação.
   IMAGE: frontend #nome da imagem
-  ACR: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+
 jobs:
   builddev:
     runs-on: ubuntu-latest
@@ -28,70 +28,31 @@ jobs:
         token: ${{ secrets.PAT }} 
         path: template
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
+    - name: templateBranch
+      uses: ./template/build/branch
       with:
-        node-version: 16.x
-        cache: 'npm'
+        tag: ${{ steps.latest.outputs.tag_name }}
+        token: ${{ secrets.PAT }}
 
-    - run: npm i -g @azure/static-web-apps-cli
-
-    - run: swa
-
-    - run: zip -qq -r ./build.zip ./build
-
-    - uses: xresloader/upload-to-github-release@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        file: "build.zip;swa-cli.config.json"
-        update_latest_release: true
-        draft: false
-        overwrite: false
-        prerelease: false
+    - name: templateBuild
+      uses: ./template/build/front
 
   deploydev:
     runs-on: ubuntu-latest
     needs: builddev
     environment: development
     steps:
-
-      - run: npm i -g @azure/static-web-apps-cli
       - id: latest
         uses: thebritican/fetch-latest-release@v2.0.0
         with:
           github_token: ${{ secrets.PAT }}
 
-      - name: Download Release Asset
-        id: download_release_asset
-        uses: i3h/download-release-asset@v1
-        with:
-          owner: hirata11
-          repo: reactstatic
-          tag: ${{ steps.latest.outputs.tag_name }} 
-          file: build.zip 
-          path: ./
-          token: ${{ secrets.PAT }}
-      
-      - name: Download Release Asset
-        id: download_release
-        uses: i3h/download-release-asset@v1
-        with:
-          owner: hirata11
-          repo: reactstatic
-          tag: ${{ steps.latest.outputs.tag_name }} 
-          file: swa-cli.config.json
-          path: ./
-          token: ${{ secrets.PAT }}
-
-      - name: Decompress
-        uses: TonyBogdanov/zip@1.0
-        with:
-            args: unzip -qq ./build.zip -d ./
-      
-      - run: ls -lRa
-
-      - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
+    - name: templateDeploy
+      uses: ./template/deploy/front
+      with:
+        tag: ${{ steps.latest.outputs.tag_name }}
+        token: ${{ secrets.TOKEN }}
+        pat: ${{ secrets.PAT }}
 
   rollbackprd:
       runs-on: ubuntu-latest
@@ -125,32 +86,27 @@ jobs:
           id: lastestRelease
           run: echo "::set-output name=releasename::$(curl -sL https://api.github.com/repos/hirata11/${{ env.APP }}/releases/latest | jq -r ".tag_name")"
 
-        - name: Download Release Asset
-          id: download_release_asset
-          uses: i3h/download-release-asset@v1
+        - name: templateDeploy
+          uses: ./template/deploy/front
           with:
-            owner: hirata11
-            repo: reactstatic
-            tag: ${{ steps.lastestRelease.outputs.releasename }}    
-            file: build.zip 
-            path: ./
-            token: ${{ secrets.PAT }}
-        
-        - name: Download Release Asset
-          id: download_release
-          uses: i3h/download-release-asset@v1
+            tag: ${{ steps.lastestRelease.outputs.releasename }}
+            token: ${{ secrets.TOKEN }}
+            pat: ${{ secrets.PAT }}
+  
+  ProductionOK:
+      runs-on: ubuntu-latest
+      needs: deploydev
+      environment: production
+      steps:
+        - id: latest
+          uses: thebritican/fetch-latest-release@v2.0.0
           with:
-            owner: hirata11
-            repo: reactstatic
-            tag: ${{ steps.lastestRelease.outputs.releasename }}   
-            file: swa-cli.config.json
-            path: ./
-            token: ${{ secrets.PAT }}
-        
-        - name: Decompress
-          uses: TonyBogdanov/zip@1.0
+            github_token: ${{ secrets.PAT }}        
+        - name:
+          uses: tukasz/direct-merge-action@master
           with:
-              args: unzip -qq ./build.zip -d ./
-
-        - run: swa deploy --deployment-token ${{ secrets.TOKEN }}
-          
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            source-branch: 'release-${{ steps.latest.outputs.tag_name }}'
+            target-branch: master
+            commit-message: "Liberada a versão ${{ steps.latest.outputs.tag_name }}" 
+      
