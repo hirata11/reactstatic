@@ -6,7 +6,6 @@ on:
 env:
   APP: reactstatic # nome da aplicação.
   IMAGE: frontend #nome da imagem
-
 jobs:
   builddev:
     runs-on: ubuntu-latest
@@ -14,51 +13,60 @@ jobs:
     - id: latest
       uses: thebritican/fetch-latest-release@v2.0.0
       with:
-        github_token: ${{ secrets.PAT }}    
-
+        github_token: ${{ secrets.PAT }}
     - name: "Checkout GitHub Action"
       uses: actions/checkout@v2
       with:
-        ref: ${{ steps.latest.outputs.tag_name }}      
-
+        ref: ${{ steps.latest.outputs.tag_name }}
     - name: Checkout private tools
       uses: actions/checkout@v3
       with:
         repository: hirata11/devops-template
         token: ${{ secrets.PAT }} 
         path: template
-
     - name: templateBranch
       uses: ./template/build/branch
       with:
         tag: ${{ steps.latest.outputs.tag_name }}
         token: ${{ secrets.PAT }}
-
     - name: templateBuild
       uses: ./template/build/front
-
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: "dev"
   deploydev:
     runs-on: ubuntu-latest
     needs: builddev
     environment: development
     steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template    
       - id: latest
         uses: thebritican/fetch-latest-release@v2.0.0
         with:
           github_token: ${{ secrets.PAT }}
-
-    - name: templateDeploy
-      uses: ./template/deploy/front
-      with:
-        tag: ${{ steps.latest.outputs.tag_name }}
-        token: ${{ secrets.TOKEN }}
-        pat: ${{ secrets.PAT }}
-
+      - name: templateDeploy
+        uses: ./template/deploy/front
+        with:
+          tag: ${{ steps.latest.outputs.tag_name }}
+          token: ${{ secrets.TOKEN }}
+          pat: ${{ secrets.PAT }}
+          env: "dev"
   rollbackprd:
       runs-on: ubuntu-latest
       needs: deploydev
       environment: rollback
       steps:
+        - name: Checkout private tools
+          uses: actions/checkout@v3
+          with:
+            repository: hirata11/devops-template
+            token: ${{ secrets.PAT }} 
+            path: template
         - run: npm i -g @azure/static-web-apps-cli
         - id: latestdel
           uses: thebritican/fetch-latest-release@v2.0.0
@@ -81,18 +89,15 @@ jobs:
             sleep 1m
             curl -sL https://api.github.com/repos/hirata11/${{ env.APP }}/releases/latest | jq -r ".tag_name"
           shell: bash
-
         - name: get lastest release
           id: lastestRelease
           run: echo "::set-output name=releasename::$(curl -sL https://api.github.com/repos/hirata11/${{ env.APP }}/releases/latest | jq -r ".tag_name")"
-
         - name: templateDeploy
           uses: ./template/deploy/front
           with:
             tag: ${{ steps.lastestRelease.outputs.releasename }}
             token: ${{ secrets.TOKEN }}
-            pat: ${{ secrets.PAT }}
-  
+            pat: ${{ secrets.PAT }}  
   ProductionOK:
       runs-on: ubuntu-latest
       needs: deploydev
