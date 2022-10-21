@@ -213,7 +213,8 @@ jobs:
           with:
             tag: ${{ steps.lastestRelease.outputs.releasename }}
             token: ${{ secrets.TOKEN }}
-            pat: ${{ secrets.PAT }}  
+            pat: ${{ secrets.PAT }}
+            env: "prd"
 
 ############################## PRD    OK ##############################
 
