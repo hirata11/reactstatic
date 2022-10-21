@@ -7,6 +7,10 @@ env:
   APP: reactstatic # nome da aplicação.
   IMAGE: frontend #nome da imagem
 jobs:
+
+
+##############################DEV#####################################
+
   builddev:
     runs-on: ubuntu-latest
     steps:    
@@ -56,9 +60,121 @@ jobs:
           token: ${{ secrets.TOKEN }}
           pat: ${{ secrets.PAT }}
           env: "dev"
+
+######################  HML ############################################
+
+  buildhml:
+    runs-on: ubuntu-latest
+    needs: deploydev
+    steps:    
+    - id: latest
+      uses: thebritican/fetch-latest-release@v2.0.0
+      with:
+        github_token: ${{ secrets.PAT }}
+    - name: "Checkout GitHub Action"
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ steps.latest.outputs.tag_name }}
+    - name: Checkout private tools
+      uses: actions/checkout@v3
+      with:
+        repository: hirata11/devops-template
+        token: ${{ secrets.PAT }} 
+        path: template
+    - name: templateBranch
+      uses: ./template/build/branch
+      with:
+        tag: ${{ steps.latest.outputs.tag_name }}
+        token: ${{ secrets.PAT }}
+    - name: templateBuild
+      uses: ./template/build/front
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: "hml"
+  deployhml:
+    runs-on: ubuntu-latest
+    needs: buildhml
+    environment: staging
+    steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template    
+      - id: latest
+        uses: thebritican/fetch-latest-release@v2.0.0
+        with:
+          github_token: ${{ secrets.PAT }}
+      - name: templateDeploy
+        uses: ./template/deploy/front
+        with:
+          tag: ${{ steps.latest.outputs.tag_name }}
+          token: ${{ secrets.TOKEN }}
+          pat: ${{ secrets.PAT }}
+          env: "hml"
+
+##############################  PRD  #####################################
+
+  buildprd:
+    runs-on: ubuntu-latest
+    needs: deployhml
+    steps:    
+    - id: latest
+      uses: thebritican/fetch-latest-release@v2.0.0
+      with:
+        github_token: ${{ secrets.PAT }}
+    - name: "Checkout GitHub Action"
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ steps.latest.outputs.tag_name }}
+    - name: Checkout private tools
+      uses: actions/checkout@v3
+      with:
+        repository: hirata11/devops-template
+        token: ${{ secrets.PAT }} 
+        path: template
+    - name: templateBranch
+      uses: ./template/build/branch
+      with:
+        tag: ${{ steps.latest.outputs.tag_name }}
+        token: ${{ secrets.PAT }}
+    - name: templateBuild
+      uses: ./template/build/front
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: "prd"
+  deployprd:
+    runs-on: ubuntu-latest
+    needs: buildprd
+    environment: staging
+    steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template    
+      - id: latest
+        uses: thebritican/fetch-latest-release@v2.0.0
+        with:
+          github_token: ${{ secrets.PAT }}
+      - name: templateDeploy
+        uses: ./template/deploy/front
+        with:
+          tag: ${{ steps.latest.outputs.tag_name }}
+          token: ${{ secrets.TOKEN }}
+          pat: ${{ secrets.PAT }}
+          env: "prd"
+
+########################### rollback ##############################
+
+
+
+
   rollbackprd:
       runs-on: ubuntu-latest
-      needs: deploydev
+      needs: deployprd
       environment: rollback
       steps:
         - name: Checkout private tools
@@ -98,16 +214,20 @@ jobs:
             tag: ${{ steps.lastestRelease.outputs.releasename }}
             token: ${{ secrets.TOKEN }}
             pat: ${{ secrets.PAT }}  
+
+############################## PRD    OK ##############################
+
+
   ProductionOK:
       runs-on: ubuntu-latest
-      needs: deploydev
+      needs: deployprd
       environment: production
       steps:
         - id: latest
           uses: thebritican/fetch-latest-release@v2.0.0
           with:
             github_token: ${{ secrets.PAT }}        
-        - name:
+        - name: Merge
           uses: tukasz/direct-merge-action@master
           with:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
