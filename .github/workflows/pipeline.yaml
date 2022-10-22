@@ -202,7 +202,7 @@ jobs:
               https://api.github.com/repos/hirata11/${{ env.APP }}/releases/$release
           shell: bash
         - run: |
-            sleep 30s
+            sleep 1m
             curl -sL https://api.github.com/repos/hirata11/${{ env.APP }}/releases/latest | jq -r ".tag_name"
           shell: bash
         - name: get lastest release
