@@ -37,7 +37,7 @@ jobs:
       uses: ./template/build/front
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        env: "dev"
+        env: "development"
   deploydev:
     runs-on: ubuntu-latest
     needs: builddev
@@ -59,7 +59,7 @@ jobs:
           tag: ${{ steps.latest.outputs.tag_name }}
           token: ${{ secrets.TOKEN }}
           pat: ${{ secrets.PAT }}
-          env: "dev"
+          env: "development"
 
 ######################  HML ############################################
 
@@ -90,7 +90,7 @@ jobs:
       uses: ./template/build/front
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        env: "hml"
+        env: "staging"
   deployhml:
     runs-on: ubuntu-latest
     needs: buildhml
@@ -112,7 +112,7 @@ jobs:
           tag: ${{ steps.latest.outputs.tag_name }}
           token: ${{ secrets.TOKEN }}
           pat: ${{ secrets.PAT }}
-          env: "hml"
+          env: "staging"
 
 ##############################  PRD  #####################################
 
@@ -143,7 +143,7 @@ jobs:
       uses: ./template/build/front
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        env: "prd"
+        env: "production"
   deployprd:
     runs-on: ubuntu-latest
     needs: buildprd
@@ -165,7 +165,7 @@ jobs:
           tag: ${{ steps.latest.outputs.tag_name }}
           token: ${{ secrets.TOKEN }}
           pat: ${{ secrets.PAT }}
-          env: "prd"
+          env: "production"
 
 ########################### rollback ##############################
 
@@ -214,7 +214,7 @@ jobs:
             tag: ${{ steps.lastestRelease.outputs.releasename }}
             token: ${{ secrets.TOKEN }}
             pat: ${{ secrets.PAT }}
-            env: "prd"
+            env: "production"
 
 ############################## PRD    OK ##############################
 
