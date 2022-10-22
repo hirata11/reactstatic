@@ -234,5 +234,6 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             source-branch: 'release-${{ steps.latest.outputs.tag_name }}'
             target-branch: master
-            commit-message: "Liberada a versão ${{ steps.latest.outputs.tag_name }}" 
+            commit-message: "Liberada a versão ${{ steps.latest.outputs.tag_name }}"
+            repo: ${{ secrets.APP }}
       
