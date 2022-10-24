@@ -144,6 +144,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         env: "production"
+        tag: ${{ steps.latest.outputs.tag_name }}
   deployprd:
     runs-on: ubuntu-latest
     needs: buildprd
