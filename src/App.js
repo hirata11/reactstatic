@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Aplicação versão 2.2 OTavio
+          Aplicação versão 2.3
         </p>
         <a
           className="App-link"
