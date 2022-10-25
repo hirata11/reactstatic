@@ -1,0 +1,35 @@
+name: FrontEnd
+on:
+  push:
+    branches: development*
+env:
+  siteenv: $(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}})
+jobs:
+  builddev:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: "Checkout GitHub Action"
+      uses: actions/checkout@v2
+    - name: Checkout private tools
+      uses: actions/checkout@v3
+      with:
+        repository: hirata11/devops-template
+        token: ${{ secrets.PAT }} 
+        path: template
+    - name: templateBuild
+      uses: ./template/build/front/frontdev
+  deploydev:
+    runs-on: ubuntu-latest
+    needs: builddev
+    steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template    
+      - name: templateDeploy
+        uses: ./template/deploy/front/frontdev
+        with:
+          token: ${{ secrets.TOKEN }}
+          env: $(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}})
