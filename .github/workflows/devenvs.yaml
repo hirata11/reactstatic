@@ -1,16 +1,10 @@
 name: FrontEnd
 on:
   push:
-    branches: dev*
+    branches: development*
 env:
-  APP: reactstatic # nome da aplicação.
-  IMAGE: frontend #nome da imagem
   siteenv: $(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}})
 jobs:
-
-
-##############################DEV#####################################
-
   builddev:
     runs-on: ubuntu-latest
     steps:    
