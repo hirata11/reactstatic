@@ -5,7 +5,7 @@ on:
 env:
   APP: reactstatic # nome da aplicação.
   IMAGE: frontend #nome da imagem
-  siteenv: developmentazul
+  siteenv: $(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}})
 jobs:
 
 
@@ -16,8 +16,6 @@ jobs:
     steps:    
     - name: "Checkout GitHub Action"
       uses: actions/checkout@v2
-      with:
-        ref: ${{ steps.latest.outputs.tag_name }}
     - name: Checkout private tools
       uses: actions/checkout@v3
       with:
@@ -26,7 +24,6 @@ jobs:
         path: template
     - name: templateBuild
       uses: ./template/build/front/frontdev
-
   deploydev:
     runs-on: ubuntu-latest
     needs: builddev
@@ -40,7 +37,5 @@ jobs:
       - name: templateDeploy
         uses: ./template/deploy/front/frontdev
         with:
-          tag: ${{ steps.latest.outputs.tag_name }}
           token: ${{ secrets.TOKEN }}
-          pat: ${{ secrets.PAT }}
-          env: ${{ env.siteenv }}
+          env: $(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}})
