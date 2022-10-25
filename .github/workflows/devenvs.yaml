@@ -5,7 +5,7 @@ on:
 env:
   APP: reactstatic # nome da aplicação.
   IMAGE: frontend #nome da imagem
-  siteenv: development-azul
+  siteenv: developmentazul
 jobs:
 
 
