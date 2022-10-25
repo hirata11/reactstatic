@@ -30,7 +30,6 @@ jobs:
   deploydev:
     runs-on: ubuntu-latest
     needs: builddev
-    environment: ${{ env.siteenv }}
     steps:
       - name: Checkout private tools
         uses: actions/checkout@v3
