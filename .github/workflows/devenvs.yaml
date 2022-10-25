@@ -1,0 +1,47 @@
+name: FrontEnd
+on:
+  push:
+    branches: dev*
+env:
+  APP: reactstatic # nome da aplicação.
+  IMAGE: frontend #nome da imagem
+  siteenv: development-azul
+jobs:
+
+
+##############################DEV#####################################
+
+  builddev:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: "Checkout GitHub Action"
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ steps.latest.outputs.tag_name }}
+    - name: Checkout private tools
+      uses: actions/checkout@v3
+      with:
+        repository: hirata11/devops-template
+        token: ${{ secrets.PAT }} 
+        path: template
+    - name: templateBuild
+      uses: ./template/build/front/frontdev
+
+  deploydev:
+    runs-on: ubuntu-latest
+    needs: builddev
+    environment: ${{ env.siteenv }}
+    steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          token: ${{ secrets.PAT }} 
+          path: template    
+      - name: templateDeploy
+        uses: ./template/deploy/front/frontdev
+        with:
+          tag: ${{ steps.latest.outputs.tag_name }}
+          token: ${{ secrets.TOKEN }}
+          pat: ${{ secrets.PAT }}
+          env: ${{ env.siteenv }}
