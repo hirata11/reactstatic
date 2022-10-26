@@ -172,7 +172,7 @@ jobs:
 
 
   rollbackprd:
-      if: steps.ProductionOK.output.runned != 'true'
+      if: ${{ steps.ProductionOK.output.runned }} != 'true'
       runs-on: ubuntu-latest
       needs: deployprd
       environment: rollback
@@ -222,7 +222,7 @@ jobs:
 
 
   ProductionOK:
-      if: steps.rollbackprd.output.runned != 'true'
+      if: ${{ steps.rollbackprd.output.runned }} != 'true'
       runs-on: ubuntu-latest
       needs: deployprd
       environment: production
