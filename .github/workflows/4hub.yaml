@@ -1,0 +1,49 @@
+name: CI/CD-DEV
+on:
+  push:
+    branches: master
+env:
+  CI: false  
+  REACT_APP_AUTH0_DOMAIN: ${{ secrets.REACT_APP_AUTH0_DOMAIN }} 
+  REACT_APP_AUTH0_CLIENT_ID: ${{ secrets.REACT_APP_AUTH0_CLIENT_ID }} 
+  REACT_APP_AUTH0_BASEURL: ${{ secrets.REACT_APP_AUTH0_BASEURL }} 
+  REACT_APP_AUTH0_AUDIENCE: ${{ secrets.REACT_APP_AUTH0_AUDIENCE }} 
+  REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }} 
+  REACT_APP_API_FS_URL: ${{ secrets.REACT_APP_API_FS_URL }}
+  REACT_APP_API_ADMIN_URL: ${{ secrets.REACT_APP_API_ADMIN_URL }}
+  REACT_APP_AZURE_INSIGHT_KEY: ${{ secrets.REACT_APP_AZURE_INSIGHT_KEY }} 
+  REACT_APP_ENV: ${{ secrets.REACT_APP_ENV }} 
+  REACT_APP_LINK_PRIVACY_POLICY: ${{ secrets.LINK_PRIVACY_POLICY_HML }}
+  REACT_APP_LINK_TERMS_OF_USE: ${{ secrets.TERMS_OF_USE_HML }}
+  REACT_APP_HOTJAR_ID: ${{ secrets.REACT_APP_HOTJAR_ID_DEV }}    
+  REACT_APP_HOTJAR_SV: ${{ secrets.REACT_APP_HOTJAR_SV_DEV }}
+  REACT_APP_API_FS_V2_URL: ${{ secrets.REACT_APP_API_FS_V2_URL_DEV }}
+jobs:
+  builddev:
+    runs-on: ubuntu-latest
+    steps:    
+    - name: "Checkout GitHub Action"
+      uses: actions/checkout@v2
+    - name: Checkout private tools
+      uses: actions/checkout@v3
+      with:
+        repository: hirata11/devops-template
+        path: template
+    - name: templateBuild
+      uses: ./template/build/front/frontdev
+      
+  deploydev:
+    runs-on: ubuntu-latest
+    needs: builddev
+    environment: development
+    steps:
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: hirata11/devops-template
+          path: template    
+      - name: templateDeploy
+        uses: ./template/deploy/front
+        with:
+          token: ${{ secrets.TOKEN }}
+          env: "development"
