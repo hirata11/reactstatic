@@ -43,7 +43,7 @@ jobs:
           repository: hirata11/devops-template
           path: template    
       - name: templateDeploy
-        uses: ./template/deploy/front
+        uses: ./template/deploy/front/frontdev
         with:
           token: ${{ secrets.TOKEN }}
           env: "development"
