@@ -27,7 +27,7 @@ jobs:
             #-d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev02","base":"dev01"}')
           #echo $release
 
-          while [  $merged -eq 'false' ]; do
+          while [  $merged == 'false' ]; do
               merged=$(curl \
               -X PUT \
               -H "Accept: application/vnd.github+json" \
