@@ -10,12 +10,18 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: getreleaseid  
-        run: |          
+        run: |
           release=$(curl \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/4intelligence/${{ env.APP }}/pulls \
+            https://api.github.com/repos/hirata11/reactstatic/pulls \
             -d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev01","base":"dev02"}')
+          release=$(curl \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/hirata11/reactstatic/pulls \
+            -d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev02","base":"dev01"}')
           echo $release
         shell: bash
