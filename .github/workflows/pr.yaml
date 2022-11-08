@@ -17,13 +17,6 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/hirata11/reactstatic/pulls \
             -d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev01","base":"dev02"}' | jq '.id')
-            -d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev01","base":"dev02"}')
-          release=$(curl \
-            -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/hirata11/reactstatic/pulls \
-            -d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev02","base":"dev01"}')
           echo $release
 
           #release=$(curl \
@@ -40,7 +33,7 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               https://api.github.com/repos/hirata11/reactstatic/pulls/$release/merge \
-              -d '{"commit_title":"An automatically merge","commit_message":"Merge dev01 to dev02"}' jq '.merged')
+              -d '{"commit_title":"An automatically merge","commit_message":"Merge dev01 to dev02"}' | jq '.merged')
               sleep 1min
           done
 
