@@ -30,7 +30,7 @@ jobs:
           curl \
             -X PUT \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.PAT }}" \
             https://api.github.com/repos/hirata11/reactstatic/pulls/$release/merge \
             -d '{"commit_title":"An automatically merge","commit_message":"Merge dev01 to dev02"}'
 
