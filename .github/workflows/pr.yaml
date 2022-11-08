@@ -8,27 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Create Pull Request
-        id: prdev02
-        uses: peter-evans/create-pull-request@v4
-        with:
-          commit-message: update changelog
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "An automatically created PR!"
-          body: Update branch to reflect new version changes
-          labels: |
-            cicd
-            automated pr
-          branch: dev02
-          base: dev01
-          
-      - name: Create Pull Request
-        id: prdev01
-        uses: peter-evans/create-pull-request@v4
-        with:
-          commit-message: update changelog
-          title: "An automatically created PR!"
-          body: Update branch to reflect release changes
-          branch: dev01
-          base: dev02
+
+      - name: getreleaseid  
+        run: |          
+          release=$(curl \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/4intelligence/${{ env.APP }}/pulls \
+            -d '{"title":"An automatically created PR!","body":"Update branch to reflect new version changes","head":"dev01","base":"dev02"}')
+          echo $release
+        shell: bash
