@@ -12,8 +12,13 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: update changelog
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           title: "An automatically created PR!"
           body: Update branch to reflect new version changes
+          labels: |
+            cicd
+            automated pr
           branch: dev02
           base: dev01
           
