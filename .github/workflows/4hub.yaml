@@ -60,7 +60,7 @@ jobs:
         uses: atlassian/gajira-create@master
         with:
           project: FOURGCM
-          issuetype: [System] Change
+          issuetype: "[System] Change"
           summary: |
             Build completed for ${{ github.repository }}
           description: |
