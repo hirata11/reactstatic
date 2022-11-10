@@ -47,3 +47,15 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           env: "development"
+      - name: Create
+        id: create
+        uses: atlassian/gajira-create@master
+        with:
+          project: FOURGCM
+          issuetype: Change
+          summary: |
+            Build completed for ${{ github.repository }}
+          description: |
+            Compare branch
+      - name: Log created issue
+        run: echo "Issue ${{ steps.create.outputs.issue }} was created"
