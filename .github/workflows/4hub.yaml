@@ -68,7 +68,7 @@ jobs:
         uses: ./template/deploy/front/frontdev
         with:
           token: ${{ secrets.TOKEN }}
-          env: "development"
+          env: ${{ env.environment }}
             
       - name: Login
         uses: atlassian/gajira-login@master
