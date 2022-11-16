@@ -59,8 +59,11 @@ jobs:
           echo "environment=${{ steps.branchname.outputs.branch_name }}" >> $GITHUB_ENV
           echo "env set to ${{ steps.branchname.outputs.branch_name }}"
           fi
-          echo $environment       
+          echo ${{ env.environment }}     
           
+      - name: envs
+        run: echo ${{ env.environment }}  
+        
       - name: templateDeploy
         uses: ./template/deploy/front/frontdev
         with:
