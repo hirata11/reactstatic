@@ -41,7 +41,26 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: hirata11/devops-template
-          path: template    
+          path: template
+        
+      - name: Set branch name
+        id: branchname
+        run: echo "branch_name=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}})" >> $GITHUB_OUTPUT
+
+      - name: "Set env"
+        env:
+          ENV_VAR: ${{ steps.branchname.outputs.branch_name }}
+        run: |
+          if [ ${{ steps.branchname.outputs.branch_name }} -eq 'master' ]
+          then
+          echo "environment=production" >> $GITHUB_ENV
+          echo "env set to production"
+          else
+          echo "environment=${{ steps.branchname.outputs.branch_name }}" >> $GITHUB_ENV
+          echo "env set to ${{ steps.branchname.outputs.branch_name }}"
+          fi
+          echo $environment       
+          
       - name: templateDeploy
         uses: ./template/deploy/front/frontdev
         with:
