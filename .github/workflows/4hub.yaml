@@ -51,7 +51,7 @@ jobs:
         env:
           ENV_VAR: ${{ steps.branchname.outputs.branch_name }}
         run: |
-          if [ ${{ steps.branchname.outputs.branch_name }} -eq 'master' ]
+          if [ ${{ steps.branchname.outputs.branch_name }} == 'master' ]
           then
           echo "environment=production" >> $GITHUB_ENV
           echo "env set to production"
